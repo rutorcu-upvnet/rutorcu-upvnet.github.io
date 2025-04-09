@@ -63,20 +63,6 @@ function App() {
                         </tr>
                     ))}
                 </tbody>
-                {/* <tbody>
-                    {componentes.map((componente, index) => (
-                        <tr key={index}>
-                            <td>{new Date(componente.fecha).toLocaleString()}</td>
-                            <td>{componente.tipo}</td>
-                            <td>{componente.valor}</td>
-                            <td>{componente.huella}</td>
-                            <td>{componente.referencia}</td>
-                            <td>{componente.distribuidor}</td>
-                            <td>{componente.descripcion}</td>
-                            <td>{componente.unidades}</td>
-                        </tr>
-                    ))}
-                </tbody> */}
             </table>
         </div>
     );

@@ -7,31 +7,39 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 function App() {
-    const [componentes, setComponentes] = useState([]);
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+    const [componentes, setComponentes] = useState([])
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
+    const [filters, setFilters] = useState({})
 
     useEffect(() => {
         const fetchComponentes = async () => {
-            const { data, error } = await supabase.from("componentes").select();
-            if (error) console.error(error);
-            else setComponentes(data);
-        };
-        fetchComponentes();
-    }, []);
-
-    const sortedComponentes = [...componentes].sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-    });
+            const { data, error } = await supabase.from("componentes").select()
+            if (error) console.error(error)
+            else setComponentes(data)
+        }
+        fetchComponentes()
+    }, [])
 
     const requestSort = (key) => {
-        let direction = 'asc';
+        let direction = 'asc'
         if (sortConfig.key === key && sortConfig.direction === 'asc') {
-            direction = 'desc';
+            direction = 'desc'
         }
-        setSortConfig({ key, direction });
-    };
+        setSortConfig({ key, direction })
+    }
+
+    const sortedComponentes = [...componentes].sort((a, b) => {
+        if (!sortConfig.key) return 0
+        if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1
+        if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1
+        return 0
+    })
+
+    const filteredComponentes = sortedComponentes.filter((comp) =>
+        Object.entries(filters).every(([key, value]) =>
+            !value || (comp[key]?.toString().toLowerCase().includes(value.toLowerCase()))
+        )
+    )
 
     return (
         <div>
@@ -42,15 +50,25 @@ function App() {
                         <th onClick={() => requestSort('fecha')}>Fecha</th>
                         <th onClick={() => requestSort('tipo')}>Tipo</th>
                         <th onClick={() => requestSort('valor')}>Valor</th>
-                        <th>Huella</th>
-                        <th>Referencia</th>
-                        <th>Distribuidor</th>
-                        <th>Descripción</th>
-                        <th>Unidades</th>
+                        <th onClick={() => requestSort('huella')}>Huella</th>
+                        <th onClick={() => requestSort('referencia')}>Referencia</th>
+                        <th onClick={() => requestSort('distribuidor')}>Distribuidor</th>
+                        <th onClick={() => requestSort('descripcion')}>Descripción</th>
+                        <th onClick={() => requestSort('unidades')}>Unidades</th>
+                    </tr>
+                    <tr>
+                        <th><input type="text" onChange={(e) => setFilters({ ...filters, fecha: e.target.value })} /></th>
+                        <th><input type="text" onChange={(e) => setFilters({ ...filters, tipo: e.target.value })} /></th>
+                        <th><input type="text" onChange={(e) => setFilters({ ...filters, valor: e.target.value })} /></th>
+                        <th><input type="text" onChange={(e) => setFilters({ ...filters, huella: e.target.value })} /></th>
+                        <th><input type="text" onChange={(e) => setFilters({ ...filters, referencia: e.target.value })} /></th>
+                        <th><input type="text" onChange={(e) => setFilters({ ...filters, distribuidor: e.target.value })} /></th>
+                        <th><input type="text" onChange={(e) => setFilters({ ...filters, descripcion: e.target.value })} /></th>
+                        <th><input type="text" onChange={(e) => setFilters({ ...filters, unidades: e.target.value })} /></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedComponentes.map((componente, index) => (
+                    {filteredComponentes.map((componente, index) => (
                         <tr key={index}>
                             <td>{new Date(componente.fecha).toLocaleString()}</td>
                             <td>{componente.tipo}</td>
@@ -65,7 +83,7 @@ function App() {
                 </tbody>
             </table>
         </div>
-    );
+    )
 }
 
-export default App;
+export default App

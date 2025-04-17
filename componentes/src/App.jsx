@@ -47,7 +47,6 @@ function App() {
             <table>
                 <thead>
                     <tr>
-                        <th onClick={() => requestSort('fecha')}>Fecha</th>
                         <th onClick={() => requestSort('tipo')}>Tipo</th>
                         <th onClick={() => requestSort('valor')}>Valor</th>
                         <th onClick={() => requestSort('huella')}>Huella</th>
@@ -57,7 +56,6 @@ function App() {
                         <th onClick={() => requestSort('unidades')}>Unidades</th>
                     </tr>
                     <tr>
-                        <th><input type="text" onChange={(e) => setFilters({ ...filters, fecha: e.target.value })} /></th>
                         <th><input type="text" onChange={(e) => setFilters({ ...filters, tipo: e.target.value })} /></th>
                         <th><input type="text" onChange={(e) => setFilters({ ...filters, valor: e.target.value })} /></th>
                         <th><input type="text" onChange={(e) => setFilters({ ...filters, huella: e.target.value })} /></th>
@@ -70,7 +68,6 @@ function App() {
                 <tbody>
                     {filteredComponentes.map((componente, index) => (
                         <tr key={index}>
-                            <td>{new Date(componente.fecha).toLocaleString()}</td>
                             <td>{componente.tipo}</td>
                             <td>{componente.valor}</td>
                             <td>{componente.huella}</td>

@@ -51,8 +51,11 @@ function App() {
     )
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target
-        setNewComponente({ ...newComponente, [name]: value })
+        const { name, value } = e.target;
+        setNewComponente({
+            ...newComponente,
+            [name]: name === 'unidades' ? parseInt(value, 10) || '' : value
+        });
     }
 
     const handleAddComponente = async (e) => {
@@ -85,6 +88,7 @@ function App() {
                 <input type="text" name="distribuidor" placeholder="Distribuidor" value={newComponente.distribuidor} onChange={handleInputChange} />
                 <input type="text" name="descripcion" placeholder="Descripción" value={newComponente.descripcion} onChange={handleInputChange} />
                 <input type="number" name="unidades" placeholder="Unidades" value={newComponente.unidades} onChange={handleInputChange} />
+                <hr></hr>
                 <button type="submit">Agregar Componente</button>
             </form>
             <h1>Componentes en stock</h1>

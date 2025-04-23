@@ -17,7 +17,8 @@ function App() {
         referencia: '',
         distribuidor: '',
         descripcion: '',
-        unidades: ''
+        unidades: '',
+        proyecto: ''
     })
 
     useEffect(() => {
@@ -81,14 +82,15 @@ function App() {
                 referencia: '',
                 distribuidor: '',
                 descripcion: '',
-                unidades: ''
+                unidades: '',
+                proyecto: '' // Limpieza del nuevo campo
             });
         }
     }
 
     return (
         <div>
-            <h1>Nuevos Componentes</h1>
+            <h2>Nuevos Componentes</h2>
             <form onSubmit={handleAddComponente}>
                 <input type="text" name="tipo" placeholder="Tipo" value={newComponente.tipo} onChange={handleInputChange} />
                 <input type="text" name="valor" placeholder="Valor" value={newComponente.valor} onChange={handleInputChange} />
@@ -97,10 +99,11 @@ function App() {
                 <input type="text" name="distribuidor" placeholder="Distribuidor" value={newComponente.distribuidor} onChange={handleInputChange} />
                 <input type="text" name="descripcion" placeholder="Descripción" value={newComponente.descripcion} onChange={handleInputChange} />
                 <input type="number" name="unidades" placeholder="Unidades" value={newComponente.unidades} onChange={handleInputChange} />
-                <hr></hr>
+                <input type="text" name="proyecto" placeholder="Proyecto" value={newComponente.proyecto} onChange={handleInputChange} /> {/* Nuevo campo */}
+                <br></br>
                 <button type="submit">Agregar Componente</button>
             </form>
-            <h1>Componentes en stock</h1>
+            <h2>Componentes en stock</h2>
             <table>
                 <thead>
                     <tr>
@@ -111,6 +114,7 @@ function App() {
                         <th onClick={() => requestSort('distribuidor')}>Distribuidor</th>
                         <th onClick={() => requestSort('descripcion')}>Descripción</th>
                         <th onClick={() => requestSort('unidades')}>Unidades</th>
+                        <th onClick={() => requestSort('proyecto')}>Proyecto</th> {/* Nueva columna */}
                     </tr>
                     <tr>
                         <th><input type="text" onChange={(e) => setFilters({ ...filters, tipo: e.target.value })} /></th>
@@ -120,6 +124,7 @@ function App() {
                         <th><input type="text" onChange={(e) => setFilters({ ...filters, distribuidor: e.target.value })} /></th>
                         <th><input type="text" onChange={(e) => setFilters({ ...filters, descripcion: e.target.value })} /></th>
                         <th><input type="text" onChange={(e) => setFilters({ ...filters, unidades: e.target.value })} /></th>
+                        <th><input type="text" onChange={(e) => setFilters({ ...filters, proyecto: e.target.value })} /></th> {/* Filtro para proyecto */}
                     </tr>
                 </thead>
                 <tbody>
@@ -132,6 +137,7 @@ function App() {
                             <td>{componente.distribuidor}</td>
                             <td>{componente.descripcion}</td>
                             <td>{componente.unidades}</td>
+                            <td>{componente.proyecto}</td> {/* Mostrar proyecto */}
                         </tr>
                     ))}
                 </tbody>

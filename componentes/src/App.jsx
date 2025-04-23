@@ -10,6 +10,15 @@ function App() {
     const [componentes, setComponentes] = useState([])
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
     const [filters, setFilters] = useState({})
+    const [newComponente, setNewComponente] = useState({
+        tipo: '',
+        valor: '',
+        huella: '',
+        referencia: '',
+        distribuidor: '',
+        descripcion: '',
+        unidades: ''
+    })
 
     useEffect(() => {
         const fetchComponentes = async () => {
@@ -41,9 +50,44 @@ function App() {
         )
     )
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target
+        setNewComponente({ ...newComponente, [name]: value })
+    }
+
+    const handleAddComponente = async (e) => {
+        e.preventDefault()
+        const { data, error } = await supabase.from("componentes").insert([newComponente])
+        if (error) {
+            console.error(error)
+        } else {
+            setComponentes([...componentes, ...data])
+            setNewComponente({
+                tipo: '',
+                valor: '',
+                huella: '',
+                referencia: '',
+                distribuidor: '',
+                descripcion: '',
+                unidades: ''
+            })
+        }
+    }
+
     return (
         <div>
-            <h1>Componentes</h1>
+            <h1>Nuevos Componentes</h1>
+            <form onSubmit={handleAddComponente}>
+                <input type="text" name="tipo" placeholder="Tipo" value={newComponente.tipo} onChange={handleInputChange} />
+                <input type="text" name="valor" placeholder="Valor" value={newComponente.valor} onChange={handleInputChange} />
+                <input type="text" name="huella" placeholder="Huella" value={newComponente.huella} onChange={handleInputChange} />
+                <input type="text" name="referencia" placeholder="Referencia" value={newComponente.referencia} onChange={handleInputChange} />
+                <input type="text" name="distribuidor" placeholder="Distribuidor" value={newComponente.distribuidor} onChange={handleInputChange} />
+                <input type="text" name="descripcion" placeholder="Descripción" value={newComponente.descripcion} onChange={handleInputChange} />
+                <input type="number" name="unidades" placeholder="Unidades" value={newComponente.unidades} onChange={handleInputChange} />
+                <button type="submit">Agregar Componente</button>
+            </form>
+            <h1>Componentes en stock</h1>
             <table>
                 <thead>
                     <tr>

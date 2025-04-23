@@ -7,9 +7,9 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 function App() {
-    const [componentes, setComponentes] = useState([])
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
-    const [filters, setFilters] = useState({})
+    const [componentes, setComponentes] = useState([]);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+    const [filters, setFilters] = useState({});
     const [newComponente, setNewComponente] = useState({
         tipo: '',
         valor: '',
@@ -19,7 +19,8 @@ function App() {
         descripcion: '',
         unidades: '',
         proyecto: ''
-    })
+    });
+    const [message, setMessage] = useState(''); // Nuevo estado para mensajes
 
     useEffect(() => {
         const fetchComponentes = async () => {
@@ -62,17 +63,13 @@ function App() {
     const handleAddComponente = async (e) => {
         e.preventDefault();
 
-        // Generar un ID aleatorio
-        const randomId = Math.floor(Math.random() * 1000000000);
-
         const componenteConId = {
-            ...newComponente,
-            id: randomId, // Agregar el ID aleatorio
+            ...newComponente
         };
 
         const { data, error } = await supabase.from("componentes").insert([componenteConId]);
         if (error) {
-            console.error(error);
+            setMessage(`Error al agregar el componente: ${error.message}`); // Mostrar mensaje de error
         } else {
             setComponentes([...componentes, ...data]);
             setNewComponente({
@@ -83,14 +80,19 @@ function App() {
                 distribuidor: '',
                 descripcion: '',
                 unidades: '',
-                proyecto: '' // Limpieza del nuevo campo
-            });
+                proyecto: ''
+            }); // Limpiar formulario
+            setMessage('Componente agregado exitosamente.'); // Mostrar mensaje de éxito
         }
-    }
+
+        // Ocultar el mensaje después de 5 segundos
+        setTimeout(() => setMessage(''), 5000);
+    };
 
     return (
         <div>
             <h2>Nuevos Componentes</h2>
+            {message && <p>{message}</p>} {/* Mostrar mensaje */}
             <form onSubmit={handleAddComponente}>
                 <input type="text" name="tipo" placeholder="Tipo" value={newComponente.tipo} onChange={handleInputChange} />
                 <input type="text" name="valor" placeholder="Valor" value={newComponente.valor} onChange={handleInputChange} />
@@ -99,8 +101,8 @@ function App() {
                 <input type="text" name="distribuidor" placeholder="Distribuidor" value={newComponente.distribuidor} onChange={handleInputChange} />
                 <input type="text" name="descripcion" placeholder="Descripción" value={newComponente.descripcion} onChange={handleInputChange} />
                 <input type="number" name="unidades" placeholder="Unidades" value={newComponente.unidades} onChange={handleInputChange} />
-                <input type="text" name="proyecto" placeholder="Proyecto" value={newComponente.proyecto} onChange={handleInputChange} /> {/* Nuevo campo */}
-                <br></br>
+                <input type="text" name="proyecto" placeholder="Proyecto" value={newComponente.proyecto} onChange={handleInputChange} />
+                <br />
                 <button type="submit">Agregar Componente</button>
             </form>
             <h2>Componentes en stock</h2>
@@ -114,7 +116,7 @@ function App() {
                         <th onClick={() => requestSort('distribuidor')}>Distribuidor</th>
                         <th onClick={() => requestSort('descripcion')}>Descripción</th>
                         <th onClick={() => requestSort('unidades')}>Unidades</th>
-                        <th onClick={() => requestSort('proyecto')}>Proyecto</th> {/* Nueva columna */}
+                        <th onClick={() => requestSort('proyecto')}>Proyecto</th>
                     </tr>
                     <tr>
                         <th><input type="text" onChange={(e) => setFilters({ ...filters, tipo: e.target.value })} /></th>
@@ -124,7 +126,7 @@ function App() {
                         <th><input type="text" onChange={(e) => setFilters({ ...filters, distribuidor: e.target.value })} /></th>
                         <th><input type="text" onChange={(e) => setFilters({ ...filters, descripcion: e.target.value })} /></th>
                         <th><input type="text" onChange={(e) => setFilters({ ...filters, unidades: e.target.value })} /></th>
-                        <th><input type="text" onChange={(e) => setFilters({ ...filters, proyecto: e.target.value })} /></th> {/* Filtro para proyecto */}
+                        <th><input type="text" onChange={(e) => setFilters({ ...filters, proyecto: e.target.value })} /></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -137,13 +139,13 @@ function App() {
                             <td>{componente.distribuidor}</td>
                             <td>{componente.descripcion}</td>
                             <td>{componente.unidades}</td>
-                            <td>{componente.proyecto}</td> {/* Mostrar proyecto */}
+                            <td>{componente.proyecto}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
         </div>
-    )
+    );
 }
 
-export default App
+export default App;

@@ -63,8 +63,12 @@ function App() {
     const handleAddComponente = async (e) => {
         e.preventDefault();
 
+        // Generar un ID aleatorio
+        const randomId = Math.floor(Math.random() * 1000000000);
+
         const componenteConId = {
-            ...newComponente
+            ...newComponente,
+            id: randomId, // Agregar el ID aleatorio
         };
 
         const { data, error } = await supabase.from("componentes").insert([componenteConId]);

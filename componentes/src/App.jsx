@@ -81,6 +81,9 @@ function App() {
             setMessage(`Error al agregar el componente: ${error.message}`); // Mostrar mensaje de error
         } else {
             setComponentes([...componentes, ...data]);
+            setMessage('Componente agregado exitosamente.'); // Mostrar mensaje de éxito
+
+            // Reiniciar el formulario
             setNewComponente({
                 tipo: '',
                 valor: '',
@@ -90,8 +93,7 @@ function App() {
                 descripcion: '',
                 unidades: '',
                 proyecto: ''
-            }); // Limpiar formulario
-            setMessage('Componente agregado exitosamente.'); // Mostrar mensaje de éxito
+            });
         }
 
         // Ocultar el mensaje después de 5 segundos
@@ -115,110 +117,108 @@ function App() {
             </form>
             <h2>Componentes en stock</h2>
             <div className="table-responsive">
-                <table className="table">
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell onClick={() => requestSort('tipo')}>Tipo <FontAwesomeIcon icon={faSort} /></TableCell>
-                                <TableCell onClick={() => requestSort('valor')}>Valor <FontAwesomeIcon icon={faSort} /></TableCell>
-                                <TableCell onClick={() => requestSort('huella')}>Huella <FontAwesomeIcon icon={faSort} /></TableCell>
-                                <TableCell onClick={() => requestSort('referencia')}>Referencia <FontAwesomeIcon icon={faSort} /></TableCell>
-                                <TableCell onClick={() => requestSort('distribuidor')}>Distribuidor <FontAwesomeIcon icon={faSort} /></TableCell>
-                                <TableCell onClick={() => requestSort('descripcion')}>Descripción <FontAwesomeIcon icon={faSort} /></TableCell>
-                                <TableCell onClick={() => requestSort('unidades')}>Unidades <FontAwesomeIcon icon={faSort} /></TableCell>
-                                <TableCell onClick={() => requestSort('proyecto')}>Proyecto <FontAwesomeIcon icon={faSort} /></TableCell>
+                <Table style={{ tableLayout: 'auto', width: '100%' }}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('tipo')}>Tipo <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('valor')}>Valor <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('huella')}>Huella <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('referencia')}>Referencia <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('distribuidor')}>Distribuidor <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('descripcion')}>Descripción <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('unidades')}>Unidades <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('proyecto')}>Proyecto <FontAwesomeIcon icon={faSort} /></TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>
+                                <TextField
+                                    label="Filtrar Tipo"
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    onChange={(e) => setFilters({ ...filters, tipo: e.target.value })}
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <TextField
+                                    label="Filtrar Valor"
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    onChange={(e) => setFilters({ ...filters, valor: e.target.value })}
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <TextField
+                                    label="Filtrar Huella"
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    onChange={(e) => setFilters({ ...filters, huella: e.target.value })}
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <TextField
+                                    label="Filtrar Referencia"
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    onChange={(e) => setFilters({ ...filters, referencia: e.target.value })}
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <TextField
+                                    label="Filtrar Distribuidor"
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    onChange={(e) => setFilters({ ...filters, distribuidor: e.target.value })}
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <TextField
+                                    label="Filtrar Descripción"
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    onChange={(e) => setFilters({ ...filters, descripcion: e.target.value })}
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <TextField
+                                    label="Filtrar Unidades"
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    onChange={(e) => setFilters({ ...filters, unidades: e.target.value })}
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <TextField
+                                    label="Filtrar Proyecto"
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    onChange={(e) => setFilters({ ...filters, proyecto: e.target.value })}
+                                />
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {filteredComponentes.map((componente, index) => (
+                            <TableRow key={index}>
+                                <TableCell>{componente.tipo}</TableCell>
+                                <TableCell>{componente.valor}</TableCell>
+                                <TableCell>{componente.huella}</TableCell>
+                                <TableCell>{componente.referencia}</TableCell>
+                                <TableCell>{componente.distribuidor}</TableCell>
+                                <TableCell>{componente.descripcion}</TableCell>
+                                <TableCell>{componente.unidades}</TableCell>
+                                <TableCell>{componente.proyecto}</TableCell>
                             </TableRow>
-                            <TableRow>
-                                <TableCell>
-                                    <TextField
-                                        label="Filtrar Tipo"
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        onChange={(e) => setFilters({ ...filters, tipo: e.target.value })}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        label="Filtrar Valor"
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        onChange={(e) => setFilters({ ...filters, valor: e.target.value })}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        label="Filtrar Huella"
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        onChange={(e) => setFilters({ ...filters, huella: e.target.value })}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        label="Filtrar Referencia"
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        onChange={(e) => setFilters({ ...filters, referencia: e.target.value })}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        label="Filtrar Distribuidor"
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        onChange={(e) => setFilters({ ...filters, distribuidor: e.target.value })}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        label="Filtrar Descripción"
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        onChange={(e) => setFilters({ ...filters, descripcion: e.target.value })}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        label="Filtrar Unidades"
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        onChange={(e) => setFilters({ ...filters, unidades: e.target.value })}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        label="Filtrar Proyecto"
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        onChange={(e) => setFilters({ ...filters, proyecto: e.target.value })}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filteredComponentes.map((componente, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>{componente.tipo}</TableCell>
-                                    <TableCell>{componente.valor}</TableCell>
-                                    <TableCell>{componente.huella}</TableCell>
-                                    <TableCell>{componente.referencia}</TableCell>
-                                    <TableCell>{componente.distribuidor}</TableCell>
-                                    <TableCell>{componente.descripcion}</TableCell>
-                                    <TableCell>{componente.unidades}</TableCell>
-                                    <TableCell>{componente.proyecto}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </table>
+                        ))}
+                    </TableBody>
+                </Table>
             </div>
         </div>
     );

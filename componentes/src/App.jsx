@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { TextField, Button, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { TextField, Button, Table, TableHead, TableRow, TableCell, TableBody, Grid } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort } from '@fortawesome/free-solid-svg-icons';
 
@@ -76,10 +76,14 @@ function App() {
             id: randomId, // Agregar el ID aleatorio
         };
 
+        console.log('Datos enviados a Supabase:', componenteConId);
+
         const { data, error } = await supabase.from("componentes").insert([componenteConId]);
         if (error) {
+            console.error('Error al insertar el componente:', error);
             setMessage(`Error al agregar el componente: ${error.message}`); // Mostrar mensaje de error
         } else {
+            console.log('Datos insertados:', data);
             setComponentes([...componentes, ...data]);
             setMessage('Componente agregado exitosamente.'); // Mostrar mensaje de éxito
 
@@ -97,7 +101,10 @@ function App() {
         }
 
         // Ocultar el mensaje después de 5 segundos
-        setTimeout(() => setMessage(''), 5000);
+        setTimeout(() => {
+            setMessage('');
+            console.log('Mensaje ocultado');
+        }, 5000);
     };
 
     return (
@@ -105,15 +112,104 @@ function App() {
             <h2 className="mb-4">Nuevos Componentes</h2>
             {message && <div className={`alert ${message.includes('Error') ? 'alert-danger' : 'alert-success'}`} role="alert">{message}</div>}
             <form onSubmit={handleAddComponente}>
-                <TextField label="Tipo" name="tipo" value={newComponente.tipo} onChange={handleInputChange} fullWidth margin="normal" />
-                <TextField label="Valor" name="valor" value={newComponente.valor} onChange={handleInputChange} fullWidth margin="normal" />
-                <TextField label="Huella" name="huella" value={newComponente.huella} onChange={handleInputChange} fullWidth margin="normal" />
-                <TextField label="Referencia" name="referencia" value={newComponente.referencia} onChange={handleInputChange} fullWidth margin="normal" />
-                <TextField label="Distribuidor" name="distribuidor" value={newComponente.distribuidor} onChange={handleInputChange} fullWidth margin="normal" />
-                <TextField label="Descripción" name="descripcion" value={newComponente.descripcion} onChange={handleInputChange} fullWidth margin="normal" />
-                <TextField label="Unidades" name="unidades" value={newComponente.unidades} onChange={handleInputChange} fullWidth margin="normal" />
-                <TextField label="Proyecto" name="proyecto" value={newComponente.proyecto} onChange={handleInputChange} fullWidth margin="normal" />
-                <Button type="submit" variant="contained" color="primary">Agregar Componente</Button>
+                <Grid container spacing={2}>
+                    {/* Primera fila */}
+                    <Grid item xs={12} sm={6} md={4}>
+                        <TextField
+                            label="Tipo"
+                            name="tipo"
+                            value={newComponente.tipo}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                        <TextField
+                            label="Valor"
+                            name="valor"
+                            value={newComponente.valor}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                        <TextField
+                            label="Huella"
+                            name="huella"
+                            value={newComponente.huella}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+
+                    {/* Segunda fila */}
+                    <Grid item xs={12} sm={6} md={4}>
+                        <TextField
+                            label="Referencia"
+                            name="referencia"
+                            value={newComponente.referencia}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                        <TextField
+                            label="Distribuidor"
+                            name="distribuidor"
+                            value={newComponente.distribuidor}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                        <TextField
+                            label="Unidades"
+                            name="unidades"
+                            value={newComponente.unidades}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+
+                    {/* Tercera fila */}
+                    <Grid item xs={12} sm={6} md={4}>
+                        <TextField
+                            label="Proyecto"
+                            name="proyecto"
+                            value={newComponente.proyecto}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+
+                    {/* Campo descripción (fila completa) */}
+                    <Grid item xs={12}>
+                        <TextField
+                            label="Descripción"
+                            name="descripcion"
+                            value={newComponente.descripcion}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                            multiline
+                            rows={3}
+                        />
+                    </Grid>
+
+                    {/* Botón de envío */}
+                    <Grid item xs={12}>
+                        <Button type="submit" variant="contained" color="primary" fullWidth>
+                            Agregar Componente
+                        </Button>
+                    </Grid>
+                </Grid>
             </form>
             <h2>Componentes en stock</h2>
             <div className="table-responsive">

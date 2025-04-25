@@ -84,7 +84,6 @@ function App() {
             setMessage(`Error al agregar el componente: ${error.message}`); // Mostrar mensaje de error
         } else {
             console.log('Datos insertados:', data);
-            setComponentes([...componentes, ...data]);
             setMessage('Componente agregado exitosamente.'); // Mostrar mensaje de éxito
 
             // Reiniciar el formulario
@@ -98,6 +97,9 @@ function App() {
                 unidades: '',
                 proyecto: ''
             });
+            const { data, error } = await supabase.from("componentes").select()
+            if (error) console.error(error)
+            else setComponentes(data)
         }
 
         // Ocultar el mensaje después de 5 segundos

@@ -124,7 +124,7 @@ function App() {
             <form onSubmit={handleAddComponente}>
                 <Grid container spacing={2}>
                     {/* Primera fila */}
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item size={4}>
                         <TextField
                             label="Tipo"
                             name="tipo"
@@ -134,7 +134,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item size={4}>
                         <TextField
                             label="Valor"
                             name="valor"
@@ -144,7 +144,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item size={4}>
                         <TextField
                             label="Huella"
                             name="huella"
@@ -155,8 +155,7 @@ function App() {
                         />
                     </Grid>
 
-                    {/* Segunda fila */}
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item size={4}>
                         <TextField
                             label="Referencia"
                             name="referencia"
@@ -166,7 +165,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item size={4}>
                         <TextField
                             label="Distribuidor"
                             name="distribuidor"
@@ -176,7 +175,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item size={4}>
                         <TextField
                             label="Unidades"
                             name="unidades"
@@ -187,20 +186,7 @@ function App() {
                         />
                     </Grid>
 
-                    {/* Tercera fila */}
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            label="Proyecto"
-                            name="proyecto"
-                            value={newComponente.proyecto}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Grid>
-
-                    {/* Campo descripción (fila completa) */}
-                    <Grid item xs={12}>
+                    <Grid item size={12}>
                         <TextField
                             label="Descripción"
                             name="descripcion"
@@ -213,8 +199,18 @@ function App() {
                         />
                     </Grid>
 
-                    {/* Botón de envío */}
-                    <Grid item xs={12}>
+                    <Grid item size={6}>
+                        <TextField
+                            label="Proyecto"
+                            name="proyecto"
+                            value={newComponente.proyecto}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+
+                    <Grid item size={6}>
                         <Button type="submit" variant="contained" color="primary" fullWidth>
                             Agregar Componente
                         </Button>

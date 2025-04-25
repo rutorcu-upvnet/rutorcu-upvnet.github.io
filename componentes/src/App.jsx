@@ -84,9 +84,20 @@ function App() {
                 setMessage(`Error al agregar el componente: ${error.message}`);
             } else {
                 console.log('Datos insertados:', data);
-                setComponentes([...componentes, ...data]);
                 setMessage('Componente agregado exitosamente.');
 
+                // Recargar todos los componentes desde la base de datos
+                const fetchComponentes = async () => {
+                    const { data, error } = await supabase.from("componentes").select();
+                    if (error) {
+                        console.error('Error al cargar los componentes:', error);
+                    } else {
+                        setComponentes(data);
+                    }
+                };
+                await fetchComponentes();
+
+                // Reiniciar el formulario
                 setNewComponente({
                     tipo: '',
                     valor: '',

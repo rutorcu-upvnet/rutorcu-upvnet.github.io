@@ -211,6 +211,12 @@ function App() {
                     </Grid>
 
                     <Grid item size={6}>
+                    </Grid>
+
+                    <Grid item size={9}>
+                    </Grid>
+
+                    <Grid item size={3}>
                         <Button type="submit" variant="contained" color="primary" fullWidth>
                             Agregar Componente
                         </Button>

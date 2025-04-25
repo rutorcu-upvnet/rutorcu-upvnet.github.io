@@ -68,45 +68,42 @@ function App() {
     const handleAddComponente = async (e) => {
         e.preventDefault();
 
-        // Generar un ID aleatorio
-        const randomId = Math.floor(Math.random() * 1000000000);
+        try {
+            const randomId = Math.floor(Math.random() * 1000000000);
 
-        const componenteConId = {
-            ...newComponente,
-            id: randomId, // Agregar el ID aleatorio
-        };
+            const componenteConId = {
+                ...newComponente,
+                id: randomId,
+            };
 
-        console.log('Datos enviados a Supabase:', componenteConId);
+            console.log('Datos enviados a Supabase:', componenteConId);
 
-        const { data, error } = await supabase.from("componentes").insert([componenteConId]);
-        if (error) {
-            console.error('Error al insertar el componente:', error);
-            setMessage(`Error al agregar el componente: ${error.message}`); // Mostrar mensaje de error
-        } else {
-            console.log('Datos insertados:', data);
-            setMessage('Componente agregado exitosamente.'); // Mostrar mensaje de éxito
+            const { data, error } = await supabase.from("componentes").insert([componenteConId]);
+            if (error) {
+                console.error('Error al insertar el componente:', error);
+                setMessage(`Error al agregar el componente: ${error.message}`);
+            } else {
+                console.log('Datos insertados:', data);
+                setComponentes([...componentes, ...data]);
+                setMessage('Componente agregado exitosamente.');
 
-            // Reiniciar el formulario
-            setNewComponente({
-                tipo: '',
-                valor: '',
-                huella: '',
-                referencia: '',
-                distribuidor: '',
-                descripcion: '',
-                unidades: '',
-                proyecto: ''
-            });
-            const { data, error } = await supabase.from("componentes").select()
-            if (error) console.error(error)
-            else setComponentes(data)
+                setNewComponente({
+                    tipo: '',
+                    valor: '',
+                    huella: '',
+                    referencia: '',
+                    distribuidor: '',
+                    descripcion: '',
+                    unidades: '',
+                    proyecto: ''
+                });
+            }
+        } catch (err) {
+            console.error('Excepción capturada:', err);
+            setMessage('Ocurrió un error inesperado.');
         }
 
-        // Ocultar el mensaje después de 5 segundos
-        setTimeout(() => {
-            setMessage('');
-            console.log('Mensaje ocultado');
-        }, 5000);
+        setTimeout(() => setMessage(''), 5000);
     };
 
     return (

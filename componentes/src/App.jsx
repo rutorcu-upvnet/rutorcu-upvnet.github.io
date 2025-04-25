@@ -5,6 +5,7 @@ import './App.css';
 import { TextField, Button, Table, TableHead, TableRow, TableCell, TableBody, Grid } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort } from '@fortawesome/free-solid-svg-icons';
+import DeleteIcon from '@mui/icons-material/Delete'; // Importar el ícono de eliminación
 
 // Configura tu proyecto
 const supabaseUrl = 'https://azclkucymxcspaquhwmv.supabase.co'
@@ -114,6 +115,35 @@ function App() {
             setMessage('Ocurrió un error inesperado.');
         }
 
+        setTimeout(() => setMessage(''), 5000);
+    };
+
+    const handleDeleteComponente = async (id) => {
+        try {
+            const { error } = await supabase.from("componentes").delete().eq("id", id);
+            if (error) {
+                console.error('Error al eliminar el componente:', error);
+                setMessage(`Error al eliminar el componente: ${error.message}`);
+            } else {
+                setMessage('Componente eliminado exitosamente.');
+
+                // Recargar todos los componentes desde la base de datos
+                const fetchComponentes = async () => {
+                    const { data, error } = await supabase.from("componentes").select();
+                    if (error) {
+                        console.error('Error al cargar los componentes:', error);
+                    } else {
+                        setComponentes(data);
+                    }
+                };
+                await fetchComponentes();
+            }
+        } catch (err) {
+            console.error('Excepción capturada:', err);
+            setMessage('Ocurrió un error inesperado al eliminar el componente.');
+        }
+
+        // Ocultar el mensaje después de 5 segundos
         setTimeout(() => setMessage(''), 5000);
     };
 
@@ -236,6 +266,7 @@ function App() {
                             <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('descripcion')}>Descripción <FontAwesomeIcon icon={faSort} /></TableCell>
                             <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('unidades')}>Unidades <FontAwesomeIcon icon={faSort} /></TableCell>
                             <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('proyecto')}>Proyecto <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell style={{ whiteSpace: 'nowrap' }}>Acciones</TableCell> {/* Nueva columna */}
                         </TableRow>
                         <TableRow>
                             <TableCell>
@@ -323,6 +354,17 @@ function App() {
                                 <TableCell>{componente.descripcion}</TableCell>
                                 <TableCell>{componente.unidades}</TableCell>
                                 <TableCell>{componente.proyecto}</TableCell>
+                                <TableCell>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        size="small"
+                                        onClick={() => handleDeleteComponente(componente.id)}
+                                        style={{ backgroundColor: 'red', color: 'white' }} // Color rojo personalizado
+                                    >
+                                        <DeleteIcon /> {/* Ícono de eliminación */}
+                                    </Button>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

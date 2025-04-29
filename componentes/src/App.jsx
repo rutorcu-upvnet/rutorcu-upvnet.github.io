@@ -119,6 +119,12 @@ function App() {
     };
 
     const handleDeleteComponente = async (id) => {
+        // Mostrar popup de confirmación
+        const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este componente?');
+        if (!confirmDelete) {
+            return; // Si el usuario cancela, no se realiza ninguna acción
+        }
+
         try {
             const { error } = await supabase.from("componentes").delete().eq("id", id);
             if (error) {
@@ -154,7 +160,7 @@ function App() {
             <form onSubmit={handleAddComponente}>
                 <Grid container spacing={2}>
                     {/* Primera fila */}
-                    <Grid item size={4}>
+                    <Grid item xs={12} sm={6} md={4} lg={4}>
                         <TextField
                             label="Tipo"
                             name="tipo"
@@ -164,7 +170,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item size={4}>
+                    <Grid item xs={12} sm={6} md={4} lg={4}>
                         <TextField
                             label="Valor"
                             name="valor"
@@ -174,7 +180,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item size={4}>
+                    <Grid item xs={12} sm={6} md={4} lg={4}>
                         <TextField
                             label="Huella"
                             name="huella"
@@ -185,7 +191,8 @@ function App() {
                         />
                     </Grid>
 
-                    <Grid item size={4}>
+                    {/* Segunda fila */}
+                    <Grid item xs={12} sm={6} md={4} lg={4}>
                         <TextField
                             label="Referencia"
                             name="referencia"
@@ -195,7 +202,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item size={4}>
+                    <Grid item xs={12} sm={6} md={4} lg={4}>
                         <TextField
                             label="Distribuidor"
                             name="distribuidor"
@@ -205,7 +212,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item size={4}>
+                    <Grid item xs={12} sm={6} md={4} lg={4}>
                         <TextField
                             label="Unidades"
                             name="unidades"
@@ -216,7 +223,8 @@ function App() {
                         />
                     </Grid>
 
-                    <Grid item size={12}>
+                    {/* Campo descripción (fila completa) */}
+                    <Grid item xs={12}>
                         <TextField
                             label="Descripción"
                             name="descripcion"
@@ -229,7 +237,8 @@ function App() {
                         />
                     </Grid>
 
-                    <Grid item size={6}>
+                    {/* Campo proyecto (fila completa) */}
+                    <Grid item xs={12}>
                         <TextField
                             label="Proyecto"
                             name="proyecto"
@@ -240,13 +249,8 @@ function App() {
                         />
                     </Grid>
 
-                    <Grid item size={6}>
-                    </Grid>
-
-                    <Grid item size={9}>
-                    </Grid>
-
-                    <Grid item size={3}>
+                    {/* Botón de envío */}
+                    <Grid item xs={12} sm={6} md={4} lg={4}>
                         <Button type="submit" variant="contained" color="primary" fullWidth>
                             Agregar Componente
                         </Button>

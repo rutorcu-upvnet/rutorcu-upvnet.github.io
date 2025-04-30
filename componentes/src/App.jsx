@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 // Configuración de Supabase
 const supabaseUrl = 'https://azclkucymxcspaquhwmv.supabase.co';
-const supabaseKey = 'SUPABASE_KEY';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6Y2xrdWN5bXhjc3BhcXVod212Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjg4NTQsImV4cCI6MjA1OTcwNDg1NH0.XFUAsD6cUJ9_6gSGHL2rFuAiiJnmv8KXSniFrBkzNnI'
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Constantes
@@ -137,8 +137,8 @@ function App() {
                 </div>
             )}
             <form onSubmit={handleAddComponente}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} md={4}>
+                <Grid container spacing={1} justifyContent="center" alignItems="center">
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField
                             label="Tipo"
                             name="tipo"
@@ -148,7 +148,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField
                             label="Valor"
                             name="valor"
@@ -158,7 +158,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField
                             label="Huella"
                             name="huella"
@@ -168,7 +168,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField
                             label="Referencia"
                             name="referencia"
@@ -178,7 +178,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField
                             label="Distribuidor"
                             name="distribuidor"
@@ -188,7 +188,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField
                             label="Unidades"
                             name="unidades"

@@ -1,16 +1,19 @@
-import { useEffect, useState } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { useEffect, useState, useCallback } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { TextField, Button, Table, TableHead, TableRow, TableCell, TableBody, Grid } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort } from '@fortawesome/free-solid-svg-icons';
-import DeleteIcon from '@mui/icons-material/Delete'; // Importar el ícono de eliminación
+import DeleteIcon from '@mui/icons-material/Delete';
 
-// Configura tu proyecto
-const supabaseUrl = 'https://azclkucymxcspaquhwmv.supabase.co'
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6Y2xrdWN5bXhjc3BhcXVod212Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjg4NTQsImV4cCI6MjA1OTcwNDg1NH0.XFUAsD6cUJ9_6gSGHL2rFuAiiJnmv8KXSniFrBkzNnI'
-const supabase = createClient(supabaseUrl, supabaseKey)
+// Configuración de Supabase
+const supabaseUrl = 'https://azclkucymxcspaquhwmv.supabase.co';
+const supabaseKey = 'SUPABASE_KEY';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Constantes
+const MESSAGE_TIMEOUT = 5000;
 
 function App() {
     const [componentes, setComponentes] = useState([]);
@@ -26,141 +29,116 @@ function App() {
         unidades: '',
         proyecto: ''
     });
-    const [message, setMessage] = useState(''); // Nuevo estado para mensajes
+    const [message, setMessage] = useState('');
+
+    // Función para cargar componentes desde la base de datos
+    const fetchComponentes = useCallback(async () => {
+        try {
+            const { data, error } = await supabase.from('componentes').select();
+            if (error) throw error;
+            setComponentes(data);
+        } catch (err) {
+            console.error('Error al cargar los componentes:', err);
+            setMessage('Error al cargar los componentes.');
+        }
+    }, []);
 
     useEffect(() => {
-        const fetchComponentes = async () => {
-            const { data, error } = await supabase.from("componentes").select()
-            if (error) console.error(error)
-            else setComponentes(data)
-        }
-        fetchComponentes()
-    }, [])
+        fetchComponentes();
+    }, [fetchComponentes]);
 
+    // Función para manejar el ordenamiento
     const requestSort = (key) => {
-        let direction = 'asc'
+        let direction = 'asc';
         if (sortConfig.key === key && sortConfig.direction === 'asc') {
-            direction = 'desc'
+            direction = 'desc';
         }
-        setSortConfig({ key, direction })
-    }
+        setSortConfig({ key, direction });
+    };
 
     const sortedComponentes = [...componentes].sort((a, b) => {
-        if (!sortConfig.key) return 0
-        if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1
-        if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1
-        return 0
-    })
+        if (!sortConfig.key) return 0;
+        if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+    });
 
     const filteredComponentes = sortedComponentes.filter((comp) =>
         Object.entries(filters).every(([key, value]) =>
             !value || (comp[key]?.toString().toLowerCase().includes(value.toLowerCase()))
         )
-    )
+    );
 
+    // Función para manejar cambios en el formulario
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewComponente({
             ...newComponente,
             [name]: name === 'unidades' ? parseInt(value, 10) || '' : value
         });
-    }
+    };
 
+    // Función para agregar un nuevo componente
     const handleAddComponente = async (e) => {
         e.preventDefault();
 
         try {
             const randomId = Math.floor(Math.random() * 1000000000);
+            const componenteConId = { ...newComponente, id: randomId };
 
-            const componenteConId = {
-                ...newComponente,
-                id: randomId,
-            };
+            const { error } = await supabase.from('componentes').insert([componenteConId]);
+            if (error) throw error;
 
-            console.log('Datos enviados a Supabase:', componenteConId);
-
-            const { data, error } = await supabase.from("componentes").insert([componenteConId]);
-            if (error) {
-                console.error('Error al insertar el componente:', error);
-                setMessage(`Error al agregar el componente: ${error.message}`);
-            } else {
-                console.log('Datos insertados:', data);
-                setMessage('Componente agregado exitosamente.');
-
-                // Recargar todos los componentes desde la base de datos
-                const fetchComponentes = async () => {
-                    const { data, error } = await supabase.from("componentes").select();
-                    if (error) {
-                        console.error('Error al cargar los componentes:', error);
-                    } else {
-                        setComponentes(data);
-                    }
-                };
-                await fetchComponentes();
-
-                // Reiniciar el formulario
-                setNewComponente({
-                    tipo: '',
-                    valor: '',
-                    huella: '',
-                    referencia: '',
-                    distribuidor: '',
-                    descripcion: '',
-                    unidades: '',
-                    proyecto: ''
-                });
-            }
+            setMessage('Componente agregado exitosamente.');
+            fetchComponentes(); // Recargar componentes
+            setNewComponente({
+                tipo: '',
+                valor: '',
+                huella: '',
+                referencia: '',
+                distribuidor: '',
+                descripcion: '',
+                unidades: '',
+                proyecto: ''
+            });
         } catch (err) {
-            console.error('Excepción capturada:', err);
-            setMessage('Ocurrió un error inesperado.');
+            console.error('Error al agregar el componente:', err);
+            setMessage('Error al agregar el componente.');
         }
 
-        setTimeout(() => setMessage(''), 5000);
+        setTimeout(() => setMessage(''), MESSAGE_TIMEOUT);
     };
 
+    // Función para eliminar un componente
     const handleDeleteComponente = async (id) => {
-        // Mostrar popup de confirmación
         const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este componente?');
-        if (!confirmDelete) {
-            return; // Si el usuario cancela, no se realiza ninguna acción
-        }
+        if (!confirmDelete) return;
 
         try {
-            const { error } = await supabase.from("componentes").delete().eq("id", id);
-            if (error) {
-                console.error('Error al eliminar el componente:', error);
-                setMessage(`Error al eliminar el componente: ${error.message}`);
-            } else {
-                setMessage('Componente eliminado exitosamente.');
+            const { error } = await supabase.from('componentes').delete().eq('id', id);
+            if (error) throw error;
 
-                // Recargar todos los componentes desde la base de datos
-                const fetchComponentes = async () => {
-                    const { data, error } = await supabase.from("componentes").select();
-                    if (error) {
-                        console.error('Error al cargar los componentes:', error);
-                    } else {
-                        setComponentes(data);
-                    }
-                };
-                await fetchComponentes();
-            }
+            setMessage('Componente eliminado exitosamente.');
+            fetchComponentes(); // Recargar componentes
         } catch (err) {
-            console.error('Excepción capturada:', err);
-            setMessage('Ocurrió un error inesperado al eliminar el componente.');
+            console.error('Error al eliminar el componente:', err);
+            setMessage('Error al eliminar el componente.');
         }
 
-        // Ocultar el mensaje después de 5 segundos
-        setTimeout(() => setMessage(''), 5000);
+        setTimeout(() => setMessage(''), MESSAGE_TIMEOUT);
     };
 
     return (
         <div className="container mt-4">
             <h2 className="mb-4">Nuevos Componentes</h2>
-            {message && <div className={`alert ${message.includes('Error') ? 'alert-danger' : 'alert-success'}`} role="alert">{message}</div>}
+            {message && (
+                <div className={`alert ${message.includes('Error') ? 'alert-danger' : 'alert-success'}`} role="alert">
+                    {message}
+                </div>
+            )}
             <form onSubmit={handleAddComponente}>
                 <Grid container spacing={2}>
-                    {/* Primera fila */}
-                    <Grid item xs={12} sm={6} md={4} lg={4}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <TextField
                             label="Tipo"
                             name="tipo"
@@ -170,7 +148,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4} lg={4}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <TextField
                             label="Valor"
                             name="valor"
@@ -180,7 +158,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4} lg={4}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <TextField
                             label="Huella"
                             name="huella"
@@ -190,9 +168,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-
-                    {/* Segunda fila */}
-                    <Grid item xs={12} sm={6} md={4} lg={4}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <TextField
                             label="Referencia"
                             name="referencia"
@@ -202,7 +178,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4} lg={4}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <TextField
                             label="Distribuidor"
                             name="distribuidor"
@@ -212,7 +188,7 @@ function App() {
                             margin="normal"
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4} lg={4}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <TextField
                             label="Unidades"
                             name="unidades"
@@ -224,7 +200,7 @@ function App() {
                     </Grid>
 
                     {/* Campo descripción (fila completa) */}
-                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                    <Grid item size={12}>
                         <TextField
                             label="Descripción"
                             name="descripcion"
@@ -238,7 +214,7 @@ function App() {
                     </Grid>
 
                     {/* Campo proyecto (fila completa) */}
-                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                    <Grid item size={12}>
                         <TextField
                             label="Proyecto"
                             name="proyecto"
@@ -250,7 +226,7 @@ function App() {
                     </Grid>
 
                     {/* Botón de envío */}
-                    <Grid item xs={12} sm={6} md={4} lg={4}>
+                    <Grid item size={4}>
                         <Button type="submit" variant="contained" color="primary" fullWidth>
                             Agregar Componente
                         </Button>
@@ -262,89 +238,15 @@ function App() {
                 <Table style={{ tableLayout: 'auto', width: '100%' }}>
                     <TableHead>
                         <TableRow>
-                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('tipo')}>Tipo <FontAwesomeIcon icon={faSort} /></TableCell>
-                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('valor')}>Valor <FontAwesomeIcon icon={faSort} /></TableCell>
-                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('huella')}>Huella <FontAwesomeIcon icon={faSort} /></TableCell>
-                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('referencia')}>Referencia <FontAwesomeIcon icon={faSort} /></TableCell>
-                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('distribuidor')}>Distribuidor <FontAwesomeIcon icon={faSort} /></TableCell>
-                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('descripcion')}>Descripción <FontAwesomeIcon icon={faSort} /></TableCell>
-                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('unidades')}>Unidades <FontAwesomeIcon icon={faSort} /></TableCell>
-                            <TableCell style={{ whiteSpace: 'nowrap' }} onClick={() => requestSort('proyecto')}>Proyecto <FontAwesomeIcon icon={faSort} /></TableCell>
-                            <TableCell style={{ whiteSpace: 'nowrap' }}>Acciones</TableCell> {/* Nueva columna */}
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>
-                                <TextField
-                                    label="Filtrar Tipo"
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    onChange={(e) => setFilters({ ...filters, tipo: e.target.value })}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <TextField
-                                    label="Filtrar Valor"
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    onChange={(e) => setFilters({ ...filters, valor: e.target.value })}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <TextField
-                                    label="Filtrar Huella"
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    onChange={(e) => setFilters({ ...filters, huella: e.target.value })}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <TextField
-                                    label="Filtrar Referencia"
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    onChange={(e) => setFilters({ ...filters, referencia: e.target.value })}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <TextField
-                                    label="Filtrar Distribuidor"
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    onChange={(e) => setFilters({ ...filters, distribuidor: e.target.value })}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <TextField
-                                    label="Filtrar Descripción"
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    onChange={(e) => setFilters({ ...filters, descripcion: e.target.value })}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <TextField
-                                    label="Filtrar Unidades"
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    onChange={(e) => setFilters({ ...filters, unidades: e.target.value })}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <TextField
-                                    label="Filtrar Proyecto"
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    onChange={(e) => setFilters({ ...filters, proyecto: e.target.value })}
-                                />
-                            </TableCell>
+                            <TableCell onClick={() => requestSort('tipo')}>Tipo <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell onClick={() => requestSort('valor')}>Valor <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell onClick={() => requestSort('huella')}>Huella <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell onClick={() => requestSort('referencia')}>Referencia <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell onClick={() => requestSort('distribuidor')}>Distribuidor <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell onClick={() => requestSort('descripcion')}>Descripción <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell onClick={() => requestSort('unidades')}>Unidades <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell onClick={() => requestSort('proyecto')}>Proyecto <FontAwesomeIcon icon={faSort} /></TableCell>
+                            <TableCell> </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -364,9 +266,9 @@ function App() {
                                         color="secondary"
                                         size="small"
                                         onClick={() => handleDeleteComponente(componente.id)}
-                                        style={{ backgroundColor: 'red', color: 'white' }} // Color rojo personalizado
+                                        style={{ backgroundColor: 'red', color: 'white' }}
                                     >
-                                        <DeleteIcon /> {/* Ícono de eliminación */}
+                                        <DeleteIcon />
                                     </Button>
                                 </TableCell>
                             </TableRow>

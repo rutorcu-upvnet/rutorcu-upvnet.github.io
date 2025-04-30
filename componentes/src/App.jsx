@@ -224,7 +224,7 @@ function App() {
                     </Grid>
 
                     {/* Campo descripción (fila completa) */}
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={12} md={12} lg={12}>
                         <TextField
                             label="Descripción"
                             name="descripcion"
@@ -238,7 +238,7 @@ function App() {
                     </Grid>
 
                     {/* Campo proyecto (fila completa) */}
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={12} md={12} lg={12}>
                         <TextField
                             label="Proyecto"
                             name="proyecto"

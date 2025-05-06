@@ -6,6 +6,7 @@ import { TextField, Button, Table, TableHead, TableRow, TableCell, TableBody, Gr
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort } from '@fortawesome/free-solid-svg-icons';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add'; // Importar el ícono de Material-UI
 
 // Configuración de Supabase
 const supabaseUrl = 'https://azclkucymxcspaquhwmv.supabase.co';
@@ -19,6 +20,7 @@ function App() {
     const [componentes, setComponentes] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
     const [filters, setFilters] = useState({});
+    const [showForm, setShowForm] = useState(false); // Estado para controlar la visibilidad del formulario
     const [newComponente, setNewComponente] = useState({
         tipo: '',
         valor: '',
@@ -69,6 +71,11 @@ function App() {
         )
     );
 
+    // Función para alternar la visibilidad del formulario
+    const toggleForm = () => {
+        setShowForm((prev) => !prev);
+    };
+
     // Función para manejar cambios en el formulario
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -101,6 +108,7 @@ function App() {
                 unidades: '',
                 proyecto: ''
             });
+            setShowForm(false); // Ocultar el formulario después de agregar el componente
         } catch (err) {
             console.error('Error al agregar el componente:', err);
             setMessage('Error al agregar el componente.');
@@ -136,103 +144,113 @@ function App() {
                     {message}
                 </div>
             )}
-            <form onSubmit={handleAddComponente}>
-                <Grid container spacing={1} justifyContent="center" alignItems="center">
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <TextField
-                            label="Tipo"
-                            name="tipo"
-                            value={newComponente.tipo}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <TextField
-                            label="Valor"
-                            name="valor"
-                            value={newComponente.valor}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <TextField
-                            label="Huella"
-                            name="huella"
-                            value={newComponente.huella}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <TextField
-                            label="Referencia"
-                            name="referencia"
-                            value={newComponente.referencia}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <TextField
-                            label="Distribuidor"
-                            name="distribuidor"
-                            value={newComponente.distribuidor}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <TextField
-                            label="Unidades"
-                            name="unidades"
-                            value={newComponente.unidades}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                        />
-                    </Grid>
 
-                    {/* Campo descripción (fila completa) */}
-                    <Grid item size={12}>
-                        <TextField
-                            label="Descripción"
-                            name="descripcion"
-                            value={newComponente.descripcion}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                            multiline
-                            rows={3}
-                        />
-                    </Grid>
+            {/* Botón para mostrar/ocultar el formulario */}
+            <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={toggleForm}
+                style={{ marginBottom: '20px' }}
+            >
+                {showForm ? 'Cerrar Formulario' : 'Agregar Componente'}
+            </Button>
 
-                    {/* Campo proyecto (fila completa) */}
-                    <Grid item size={12}>
-                        <TextField
-                            label="Proyecto"
-                            name="proyecto"
-                            value={newComponente.proyecto}
-                            onChange={handleInputChange}
-                            fullWidth
-                            margin="normal"
-                        />
+            {/* Formulario visible solo si showForm es true */}
+            {showForm && (
+                <form onSubmit={handleAddComponente}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Tipo"
+                                name="tipo"
+                                value={newComponente.tipo}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Valor"
+                                name="valor"
+                                value={newComponente.valor}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Huella"
+                                name="huella"
+                                value={newComponente.huella}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Referencia"
+                                name="referencia"
+                                value={newComponente.referencia}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Distribuidor"
+                                name="distribuidor"
+                                value={newComponente.distribuidor}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Unidades"
+                                name="unidades"
+                                value={newComponente.unidades}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Descripción"
+                                name="descripcion"
+                                value={newComponente.descripcion}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                                multiline
+                                rows={3}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Proyecto"
+                                name="proyecto"
+                                value={newComponente.proyecto}
+                                onChange={handleInputChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button type="submit" variant="contained" color="primary" fullWidth>
+                                Agregar Componente
+                            </Button>
+                        </Grid>
                     </Grid>
+                </form>
+            )}
 
-                    {/* Botón de envío */}
-                    <Grid item size={4}>
-                        <Button type="submit" variant="contained" color="primary" fullWidth>
-                            Agregar Componente
-                        </Button>
-                    </Grid>
-                </Grid>
-            </form>
             <h2>Componentes en stock</h2>
             <div className="table-responsive">
                 <Table style={{ tableLayout: 'auto', width: '100%' }}>

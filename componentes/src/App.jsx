@@ -153,7 +153,7 @@ function App() {
                 onClick={toggleForm}
                 style={{ marginBottom: '20px' }}
             >
-                {showForm ? 'Cerrar Formulario' : 'Agregar Componente'}
+                {showForm ? 'Cancelar' : 'Agregar Componente'}
             </Button>
 
             {/* Formulario visible solo si showForm es true */}
@@ -190,6 +190,8 @@ function App() {
                                 margin="normal"
                             />
                         </Grid>
+                    </Grid>
+                    <Grid container spacing={2}>
                         <Grid item xs={12} sm={6} md={4}>
                             <TextField
                                 label="Referencia"
@@ -220,6 +222,8 @@ function App() {
                                 margin="normal"
                             />
                         </Grid>
+                    </Grid>
+                    <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
                                 label="Descripción"
@@ -242,7 +246,9 @@ function App() {
                                 margin="normal"
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                    </Grid>
+                    <Grid container spacing={2}>
+                        <Grid item xs={4}>
                             <Button type="submit" variant="contained" color="primary" fullWidth>
                                 Agregar Componente
                             </Button>
